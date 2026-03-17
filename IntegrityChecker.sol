@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 contract IntegrityChecker{
     
     struct Signature{
-        uint256 timestamp;
+        uint timestamp;
         address signataire;
     }
 

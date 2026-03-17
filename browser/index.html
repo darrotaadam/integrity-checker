@@ -6,7 +6,9 @@
         <script src="web3.min.js"></script>
         <script src="bootstrap.bundle.min.js"></script>
         <script src="crypto.js"  ></script>
-        <script type="module" src="index.js"  ></script>
+        <script src="ajax.js"  ></script>
+        <script src="blockchain.js"  ></script>
+        <script type="module" src="index.js"  defer></script>
         <meta charset="utf-8">
     </head>
 
@@ -41,16 +43,18 @@
                 <div id="nav-sign" role="tabpanel" aria-labelledby="nav-sign-tab" class="tab-pane fade show active">
                     <h1>Signer un document</h1>
                     <form id="form-sign">
-                        <input type="file" id="file-sign-input" name="files" />
+                        <input type="file" id="file-sign-input" class="form-control-file" name="files" />
                         <button type="submit" class="btn btn-primary mb-2" id="file-sign-button" >Signer</button>
                     </form>
                 </div>
                 <div id="nav-verify" role="tabpanel" aria-labelledby="nav-verify-tab" class="tab-pane fade">
                     <h1>Vérifier l'intégrité d'un document</h1>
                     <form id="form-verify" >
-                        <input type="file" id="file-verify-input" name="files" />
+                        <input type="file" id="file-verify-input" class="form-control-file" name="files" />
                         <button type="submit" class="btn btn-primary mb-2" id="file-verify-button">Vérifier</button>
                     </form>
+                        <div id="verify-result">
+                        </div>
                 </div>
             <div/>
         </main>

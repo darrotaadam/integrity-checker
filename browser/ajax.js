@@ -1,14 +1,17 @@
+function  Fetcher(){
+}
 
-async function fetchPdfAjax(fileName, signerAddress, documentHash){
-    const response = await fetch('/generate-certificate', {
+
+Fetcher.prototype.fetchPdfAjax = async (fileName, timestamp, signerAddress, documentHash)=>{
+    const response = await fetch('/certificate', {
     method: 'POST',
     headers: {
         'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-        fileName: file.name,
-        signDate: new Date().toLocaleDateString(),
-        signerAddress: (await web3.eth.getAccounts())[0],
+        fileName: fileName,
+        signDate: new Date(),
+        signerAddress: signerAddress,
         documentHash: HASH
     })
 });
@@ -24,12 +27,19 @@ a.click();
 
 
 
-async function fetchContract(contractName){
-    const response = await fetchContract(`/${contractName}.json`, {
-        headers : {
-            "Content-Type" : "application/json"
-        }
-    });
+ Fetcher.prototype.fetchContract = async (contractName) => {
+    try{
+        const response = await fetch(`/${contractName}.json`, {
+            headers : {
+                "Content-Type" : "application/json"
+            }
+        });
 
-    console.log(response);
+        const json = await response.json();
+        return json;
+    }
+    catch(e){
+        console.log(e); 
+        return {};
+    }
 }

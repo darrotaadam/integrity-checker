@@ -7,18 +7,27 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.post('/generate-certificate', async (req, res) => {
+app.post('/certificate', async (req, res) => {
     try {
-        const { fileName, blockHash, signerAddress, documentHash } = req.body;
+        const { fileName, signerAddress, documentHash } = req.body;
         
         const blockchain = new BlockchainWrapper();
 
-        const signatureTimestamp = await blockchain.getTimestamp(blockHash); 
+        const signatureTimestamp = await blockchain.verifySignature(documentHash).then((sigs)=> {
+            for(let sig in sigs){
+                if(sig.signataire === signerAddress){
+                    return sig;
+                }
+            }
+        }).timestamp; 
+
         console.log(signatureTimestamp);
         
+        const dateSignature = new Date(Number(signatureTimestamp));
+
         const pdfBytes = await generateCertificate({
             fileName,
-            signDate,
+            dateSignature,
             signerAddress,
             documentHash
         });

@@ -1,63 +1,65 @@
-import { BlockChain } from "./blockchain"; 
 
 console.log("index.js");
 
 
 
+
 const BLOCKCHAIN = new BlockChain();
 
+BLOCKCHAIN.initAccount();
 
-document.getElementById("form-sign").addEventListener("submit", (e) => {
+BLOCKCHAIN.setContract("IntegrityChecker");
+
+document.getElementById("form-sign").addEventListener("submit", async (e) => {
     e.preventDefault();
-    const HASH = getHashOfDoc(e.target.files.files);
-    return false;
+    const HASH = await getHashOfDoc(e.target.files.files);
+    console.log(HASH);
+    const result = BLOCKCHAIN.addSignature(HASH);
+    console.log(result);
+    //BLOCKCHAIN.fetcher.fetchPdfAjax(BLOCKCHAIN.contractName, BLOCKCHAIN.accounts[0]);
 
+    return false;
+});
+
+
+document.getElementById("form-verify").addEventListener("submit", async(e)=>{
+    e.preventDefault();
+    const HASH = await getHashOfDoc(e.target.files.files);
+    console.log(HASH);
+    const result = await BLOCKCHAIN.verifySignature(HASH);
+    console.log(result);
+
+    const verify_result = document.getElementById("verify-result");
+
+    if( result.length <= 0){
+        verify_result.innerHTML = "<p>Document Non Reconnu.</p>";
+    }
+    else{
+        verify_result.innerHTML = "<h2>Signatures</h2>"        
+        for(let i=0; i<result.length; i++){
+            verify_result.innerHTML += `
+            <div>
+                <h4>Signataire</h2>
+                <p>${result[i].signataire}</p>
+                </br>
+            </div>
+            <div>
+                <h4>Date de signature</h2>
+                <p>${new Date(Number(result[i].timestamp))}</p>
+                </br>
+            </div>
+            `;
+        }
+    }
+
+    return false;
 });
 
 
 
 
-
 if (window.ethereum) {
-    // use the injected Ethereum provider to initialize Web3.js
-    const web3 = new Web3(window.ethereum);
-    window.ethereum.request({ method: "eth_requestAccounts" });
     
-    web3.eth.getAccounts().then((r)=>{
-        console.log(r);
-        document.getElementById("header-right").innerText = `Connecté avec l'adresse ${r[0]}`;
-    });
-
-    // check if Ethereum provider comes from MetaMask
-    if (window.ethereum.isMetaMask) {
-        document.getElementById('provider').innerText =
-            'Connected to Ethereum with MetaMask.';
-    } else {
-        document.getElementById('provider').innerText =
-            'Non-MetaMask Ethereum provider detected.';
-    }
-
-    // get chain ID and populate placeholder
-    document.getElementById(
-        'chainId',
-    ).innerText = `Chain ID: ${await web3.eth.getChainId()} `;
-    // get latest block and populate placeholder
-    document.getElementById(
-        'latestBlock',
-    ).innerText = `Latest Block: ${await web3.eth.getBlockNumber()}`;
-
-
-
-    // subscribe to new blocks and update UI when a new block is created
-    const blockSubscription = await web3.eth.subscribe('newBlockHeaders');
-    blockSubscription.on('data', block => {
-        document.getElementById(
-            'latestBlock',
-        ).innerText = `Latest Block: ${block.number}`;
-
-    });
-
-
 
 } else {
     // no Ethereum provider - instruct user to install MetaMask

@@ -1,5 +1,5 @@
 {
-	"address": "0xb6097E98d199c9F8e8F520956dd2EA6D755C910F",
+	"address": "0x5e761AF405CF7daE0c17729126c182E1abDcDe4c",
 	"abi": [
 		{
 			"inputs": [
@@ -10,7 +10,13 @@
 				}
 			],
 			"name": "addSignature",
-			"outputs": [],
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
 			"stateMutability": "nonpayable",
 			"type": "function"
 		},
