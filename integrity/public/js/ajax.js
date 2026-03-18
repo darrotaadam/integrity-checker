@@ -16,10 +16,13 @@ Fetcher.prototype.fetchPdfAjax = async (file, signerAddress, documentHash)=>{
 });
 const blob = await response.blob();
 const url = window.URL.createObjectURL(blob);
+/*
 const a = document.createElement('a');
 a.href = url;
 a.download = `certificat_${file.name}.pdf`;
 a.click();
+*/
+window.open(url, '_blank').focus();
 
 }
 
