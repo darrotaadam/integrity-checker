@@ -10,8 +10,17 @@ const CODES = {
     ALREADY_SIGNED : 8
 }
 
-
+BLOCKCHAIN.setOnNewBlockCallback( (block)=>{
+    console.log("[*] NEW BLOCK : ",block);
+    document.getElementById("latestBlock-number").innerText = block.number;
+    document.getElementById("latestBlock-nonce").innerText = block.nonce;
+    document.getElementById("latestBlock-hash").innerText = block.hash;
+});
 await BLOCKCHAIN.setContract("IntegrityChecker");
+
+BLOCKCHAIN.onNewBlock(await BLOCKCHAIN.getBlock( await BLOCKCHAIN.getBlockNumber()));
+
+BLOCKCHAIN.subscribeToBlocksChange();
 
 document.getElementById("form-sign").addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -43,10 +52,12 @@ document.getElementById("form-sign").addEventListener("submit", async (e) => {
         throw new Error("User has already signed");
     } 
     
+
     const receipt = await BLOCKCHAIN.addSignature(HASH);
     console.log(receipt)
     const result = receipt.events.addSignatureResult;
-    
+
+        
     switch (Number(result.returnValues.code)){
         case CODES.OK: {
                 document.getElementById('sign-result').innerHTML = `<p><h2>Document signé avec succès</h2>
@@ -65,14 +76,11 @@ document.getElementById("form-sign").addEventListener("submit", async (e) => {
     console.log(result);
     BLOCKCHAIN.fetcher.fetchPdfAjax(FILE, BLOCKCHAIN.accounts[0], HASH);
 
-
-
-
     return false;
 });
 
 
-document.getElementById("form-verify").addEventListener("submit", async (e)=>{
+document.getElementById("form-verify").addEventListener("change", async (e)=>{
     e.preventDefault();
 
     document.getElementById('verify-result').innerHTML = "";
@@ -82,7 +90,7 @@ document.getElementById("form-verify").addEventListener("submit", async (e)=>{
     }
     console.log(BLOCKCHAIN.accounts);
     
-    const FILE = e.target.files.files[0];
+    const FILE = e.target.files[0];
     
     
     if( !FILE ){

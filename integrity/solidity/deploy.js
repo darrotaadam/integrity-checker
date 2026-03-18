@@ -4,6 +4,8 @@ const fs = require('fs');
 
 const web3 = new Web3('http://127.0.0.1:7545/');
 
+const COMPTE_9 = "0x63D84704065FFe7CE2d5DA919ce196810d55CA83";
+
 const contractName = 'IntegrityChecker';
 const bytecodePath = path.join(__dirname, `${contractName}.bin`);
 const bytecode = fs.readFileSync(bytecodePath, 'utf8');
@@ -13,8 +15,8 @@ const myContract = new web3.eth.Contract(abi);
 myContract.handleRevert = true;
 
 async function deploy() {
-	const providersAccounts = await web3.eth.getAccounts();
-	const defaultAccount = providersAccounts[0];
+//	const providersAccounts = await web3.eth.getAccounts();
+	const defaultAccount = COMPTE_9;
 	console.log('Deployer account:', defaultAccount);
 
 	const contractDeployer = myContract.deploy({

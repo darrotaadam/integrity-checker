@@ -7,27 +7,38 @@ class BlockChain {
         this.contract = null;
         this.contractName = null;
         this.fetcher = new Fetcher();
+        this.blockSubscription = null;
         console.log(this);
+        this.onNewBlock = null;
     }
     isMetaMask() {
         return window.ethereum.isMetaMask;
     }
+
+    setOnNewBlockCallback(onNewBlock){
+        this.onNewBlock = onNewBlock;
+    }
+
     async getChainId() {
-        return await web3.eth.getChainId();
+        return await this.web3.eth.getChainId();
     }
     async getBlockNumber() {
-        return await web3.eth.getBlockNumber();
+        return await this.web3.eth.getBlockNumber();
     }
     async initAccount() {
         this.accounts =await window.ethereum.request({ method: "eth_requestAccounts" });
     }
-    onNewBlock(block) {
-        console.log(block);
+    async getBlock(blockNumber){
+        return await this.web3.eth.getBlock(blockNumber);
     }
+
+    
     async subscribeToBlocksChange() {
-        const blockSubscription = await this.web3.eth.subscribe('newBlockHeaders');
-        blockSubscription.on('data', block => {
-            this.onNewBlock(block);
+        this.blockSubscription = await this.web3.eth.subscribe('newBlockHeaders');
+        this.blockSubscription.on('data', block => {
+            if (this.onNewBlock){
+                this.onNewBlock(block);
+            }
         });
     }
     async setContract(contractName) {
