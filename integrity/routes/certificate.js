@@ -1,44 +1,49 @@
-const express = require('express');
-const cors = require('cors');
-import { generateCertificate } from './certificate';
-import { BlockchainWrapper } from './blockchain';
+import { Router } from 'express';
+const router = Router();
 
-const app = express();
-app.use(cors());
-app.use(express.json());
+import { generateCertificate } from '../services/certificate.js';
+import { BlockchainWrapper } from '../services/blockchain.js';
 
-app.post('/certificate', async (req, res) => {
+
+router.post('/certificate', async (req, res) => {
     try {
         const { fileName, signerAddress, documentHash } = req.body;
         
-        const blockchain = new BlockchainWrapper();
+        const blockchain = new BlockchainWrapper("IntegrityChecker");
+        //await blockchain.initAccount();
+        blockchain.accounts = [signerAddress];
+        //console.log(blockchain.accounts);
 
-        const signatureTimestamp = await blockchain.verifySignature(documentHash).then((sigs)=> {
-            for(let sig in sigs){
-                if(sig.signataire === signerAddress){
+        //console.log(await blockchain.verifySignature(documentHash));
+
+        const signature = await blockchain.verifySignature(documentHash).then((sigs)=> {
+            for(let sig of sigs){
+                if(sig.signataire.toLowerCase() === signerAddress.toLowerCase()){
                     return sig;
                 }
             }
-        }).timestamp; 
+        }); 
 
+        console.log("signature => ", signature);
+        const signatureTimestamp = signature.timestamp;
         console.log(signatureTimestamp);
-        
-        const dateSignature = new Date(Number(signatureTimestamp));
+
+        const signDate = new Date(Number(signatureTimestamp)*1000).toDateString();
+        console.log(signDate);
 
         const pdfBytes = await generateCertificate({
             fileName,
-            dateSignature,
+            signDate,
             signerAddress,
             documentHash
         });
-        res.contentType('application/pdf');
-        res.send(pdfBytes);
+        res.setHeader('Content-Type', 'application/pdf');
+        res.setHeader('Content-Disposition', 'attachment; filename="certificate.pdf"');
+        res.send(Buffer.from(pdfBytes));
     } catch (error) {
         console.error(error);
-        res.status(500).send('Erreur lors de la génération du certificat');
+        res.status(500).send('Erreur lors de la génération du certificat' +  error.message + error.stack);
     }
 });
 
-app.listen(3000, () => {
-    console.log('Serveur démarré sur http://localhost:3000');
-});
+export default router;
