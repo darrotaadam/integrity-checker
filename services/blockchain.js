@@ -9,7 +9,7 @@ const __dirname = path.dirname(__filename);
 export class BlockchainWrapper{
 
     constructor(contractName){
-        this.web3 = new Web3('http://localhost:7545');
+        this.web3 = new Web3(`http://${process.env.BLOCKCHAIN_NETWORK_HOST}:${process.env.BLOCKCHAIN_NETWORK_PORT}`);
         this.accounts = null;
 
         this.contractJson = JSON.parse(
