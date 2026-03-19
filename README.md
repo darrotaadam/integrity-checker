@@ -26,6 +26,10 @@ Dans **solidity/** déployer le contrat : ```bash compile_and_deploy.sh```
 ## Lancer le projet
 A la racine du projet : ```npm start```
 
+Vous pouvez vous connecter sur **https://localhost:3000/**
+
+* Si l'extension MetaMask refuse les échanges venant de localhost, ajoutez une entrée à votre fichier HOSTS : **integrity.local : 127.0.0.1**
+
 ---
 
 ## Contrat 
