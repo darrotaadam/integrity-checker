@@ -35,18 +35,22 @@
                     <div id="chainId"></div>
                     <div id="latestBlock"></div>
 
-                    <h6 class="mt-2"><strong>DERNIER BLOC</strong></h6>
-                    <hr class="my-2">
-                    
-                    <small>Numéro</small>
-                    <div id="latestBlock-number" class="ps-2 bg-dark bg-gradient rounded"></div>
 
-                    <small>Nonce</small>
-                    <div id="latestBlock-nonce" class="ps-2 bg-dark bg-gradient rounded"></div>
 
-                    <small>Hash</small>
-                    <div id="latestBlock-hash" class="ps-2 bg-dark bg-gradient rounded"></div>
+                    <h6 class="mt-2"><button type="button" class="btn btn-primary-dark" data-bs-toggle="collapse" data-bs-target="#collabse-block-infos" aria-expanded="true" aria-controls="collabse-block-infos" >DERNIER BLOC</button></h6>
+                    <div class="collapse show" id="collabse-block-infos">
+                        <hr class="my-2">
+                        
+                        <small>Numéro</small>
+                        <div id="latestBlock-number" class="ps-2 bg-dark bg-gradient rounded"></div>
 
+                        <small>Nonce</small>
+                        <div id="latestBlock-nonce" class="ps-2 bg-dark bg-gradient rounded"></div>
+
+                        <small>Hash</small>
+                        <div id="latestBlock-hash" class="ps-2 bg-dark bg-gradient rounded"></div>
+
+                    </div>
                     <div id="connectedAccount" class="mt-2"></div>
                 </div>
             </div>
@@ -100,7 +104,7 @@
                         </div>
                     </div>
 
-                    <div class="card">
+                    <div class="card d-none">
                         <div class="card-body">
                             <div id="sign-result"></div>
                         </div>
@@ -145,9 +149,9 @@
                             </form>
                         </div>
                     </div>
-                    <div class="card">
+                    <div class="card d-none">
                         <div class="card-body">
-                            <div id="verify-result"></div>
+                            <div id="verify-result" ></div>
                         </div>
                     </div>
 

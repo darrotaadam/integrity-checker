@@ -134,26 +134,20 @@ async function extractCertData(certFile) {
     const keywords = pdfDoc.getKeywords();
 
     if ( !keywords ) {
+        showVerifyError("Certificat invalide");
         throw new Error("Certificat invalide");
     }
 
     try {
         return JSON.parse(keywords);
     } catch(e){
+        showVerifyError("Certificat invalide");
         throw new Error("Certificat invalide");
     }
 }
 
 
 
-function showVerifyError(msg) {
-    document.getElementById("verify-result").innerHTML = `<p>${msg}</p>`;
-}
-
-function showValidCertificate(sig) {
-    document.getElementById("verify-result").innerHTML = `<h2>Certificat valide</h2>`;
-    document.getElementById("verify-result").appendChild(createSignaturesTable([sig]));
-}
 
 
 
@@ -174,6 +168,33 @@ document.getElementById("file-sign-input").addEventListener("change", async (e) 
 });
 
 
+const signMessage = document.getElementById('sign-result');
+const signMessageObserver = new MutationObserver(()=>{
+    if (signMessage.childElementCount === 0){
+        console.log("sign empty");
+        signMessage.closest('.card').classList.add("d-none");
+    }else{
+        console.log("sign not empty");
+        signMessage.closest('.card').classList.remove("d-none");
+    }
+}); 
+signMessageObserver.observe(signMessage, { childList: true, subtree: true })
+
+const verifyMessage = document.getElementById('verify-result');
+const verifyMessageObserver = new MutationObserver(()=>{
+    if (verifyMessage.childElementCount === 0){
+        console.log("sign empty");
+        verifyMessage.closest('.card').classList.add("d-none");
+    }else{
+        console.log("sign not empty");
+        verifyMessage.closest('.card').classList.remove("d-none");
+    }
+}); 
+verifyMessageObserver.observe(verifyMessage, { childList: true, subtree: true })
+
+
+
+
 document.getElementById("form-sign").addEventListener("submit", async (e) => {
     e.preventDefault();
     
@@ -185,6 +206,7 @@ document.getElementById("form-sign").addEventListener("submit", async (e) => {
 
     const FILE = e.target.files.files[0];
     if( !FILE ){
+        showSignError("Aucun fichier sélectionné");
         throw new Error("No files selected");
     }
     const HASH = await getHashOfDoc(FILE);
@@ -193,7 +215,7 @@ document.getElementById("form-sign").addEventListener("submit", async (e) => {
     const hasAddrAlreadySigned = await BLOCKCHAIN.hasAddrAlreadySigned(HASH);
     console.log("hasAddrAlreadySigned : ", hasAddrAlreadySigned);
     if(hasAddrAlreadySigned === true){
-        document.getElementById('sign-result').innerHTML = `<p><h2>Le document a déjà été signé avec l'adresse utilisée:</h2>
+        document.getElementById('sign-result').innerHTML = `<p><h2 class="text-warning">Le document a déjà été signé avec l'adresse utilisée:</h2>
         <br>
         <table class="table table-dark">
             <thead>
@@ -225,7 +247,7 @@ document.getElementById("form-sign").addEventListener("submit", async (e) => {
         
     switch (Number(result.returnValues.code)){
         case CODES.OK: {
-                document.getElementById('sign-result').innerHTML = `<p><h2>Document signé avec succès</h2>
+                document.getElementById('sign-result').innerHTML = `<p><h2 class="text-success">Document signé avec succès</h2>
                 <br>
                 <hr>
                 Emprunte correspondante :

@@ -13,7 +13,6 @@ function getHashOfDoc(FILE){
         
         const reader = new FileReader();
         
-
         reader.onload = async () => {
             try{
             const hashBuffer = await window.crypto.subtle.digest("SHA-256", reader.result);
@@ -116,4 +115,20 @@ function createSignaturesTable(signatures){
     table.appendChild(tbody);
     return table;
 
+}
+
+
+
+
+function showVerifyError(msg) {
+    document.getElementById("verify-result").innerHTML = `<p class="text-warning">${msg}</p>`;
+}
+
+function showSignError(msg) {
+    document.getElementById("sign-result").innerHTML = `<p class="text-warning">${msg}</p>`;
+}
+
+function showValidCertificate(sig) {
+    document.getElementById("verify-result").innerHTML = `<h2 class="text-success">Certificat valide</h2>`;
+    document.getElementById("verify-result").appendChild(createSignaturesTable([sig]));
 }
