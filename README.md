@@ -50,8 +50,8 @@ Synopsis:
         adresse du signataire
         hash du document signé
 
-
-Détails techniques : 
+    Ou alors exporter un certificat dans un format custom / json / xml 
+    et permettre de l'ouvrir avec le fichier upload pour vérifier correspondance entre les hashs
 
 
 

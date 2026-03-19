@@ -5,14 +5,24 @@ export async function generateCertificate({
   fileName,
   signDate,
   signerAddress,
-  documentHash
+  documentHash,
+  contractAddress
 }) {
   // Create a new PDF document
   const pdfDoc = await PDFDocument.create();
+  
+  pdfDoc.setKeywords([
+  JSON.stringify({
+    documentHash,
+    signerAddress,
+    contractAddress: contractAddress
+  })
+]);
+  
   const page = pdfDoc.addPage([550, 750]);
   const { width, height } = page.getSize();
 
-  // Embed the Helvetica font
+  // polices standard car on peut avoir le facteur largeur/longeur pour calculer les décalages par rapport au nombre de caractères
   const helvetica = await pdfDoc.embedFont(StandardFonts.Helvetica);
   const helveticaBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
   
@@ -21,7 +31,6 @@ export async function generateCertificate({
   
   const BORDER_WIDTH = 2;
 
-  // Draw a nice background rectangle
   page.drawRectangle({
     x: 50,
     y: 650 - HEIGHT_OFFSET,
@@ -42,16 +51,17 @@ export async function generateCertificate({
     color: rgb(0.2, 0.4, 0.8),
   });
 
-  // Subtitle
+
   page.drawText('Ce document atteste de l\'authenticité et de l\'intégrité du fichier signé.', {
-    x: 70,
+    x: (width/2) - (helvetica.widthOfTextAtSize('Ce document atteste de l\'authenticité et de l\'intégrité du fichier signé.', 10)/2),
     y: 670 - HEIGHT_OFFSET,
     size: 10,
     font: helvetica,
     color: rgb(0.3, 0.3, 0.3),
   });
 
-  // Document info
+  
+  
   page.drawText(`Nom du fichier :`, {
     x: 70,
     y: 600 - HEIGHT_OFFSET,
@@ -59,7 +69,8 @@ export async function generateCertificate({
     font: helveticaBold,
     color: rgb(0, 0, 0),
   });
-  page.drawText(fileName, {
+  const safeFileName = fileName.replace(/[^\x00-\xFF]/g, '?'); // remplace les caractères non WinAnsi
+  page.drawText(safeFileName, {
     x: 75,
     y: 580 - HEIGHT_OFFSET ,
     size: 12,
@@ -97,7 +108,7 @@ export async function generateCertificate({
     color: rgb(0, 0, 0),
   });
 
-  page.drawText(`Emprunte SHA256 du document :`, {
+  page.drawText(`Adresse du Smart-Contract :`, {
     x: 70,
     y: 450 - HEIGHT_OFFSET,
     size: 14,
@@ -111,16 +122,50 @@ export async function generateCertificate({
     font: helvetica,
     color: rgb(0, 0, 0),
   });
-
-  // Footer
-  page.drawText('Ce certificat a été généré automatiquement et atteste de l\'intégrité du document.', {
+  
+  page.drawText(`Emprunte SHA256 du document :`, {
     x: 70,
+    y: 390 - HEIGHT_OFFSET,
+    size: 14,
+    font: helveticaBold,
+    color: rgb(0, 0, 0),
+  });
+  page.drawText(documentHash, {
+    x: 75,
+    y: 370 - HEIGHT_OFFSET,
+    size: 10,
+    font: helvetica,
+    color: rgb(0, 0, 0),
+  });
+
+  
+  page.drawText('Ce certificat a été généré automatiquement et atteste de l\'intégrité du fichier signé.', {
+    x: (width/2) - (helvetica.widthOfTextAtSize('Ce certificat a été généré automatiquement et atteste de l\'intégrité du fichier signé.', 10)/2),
     y: 100 - HEIGHT_OFFSET,
     size: 10,
     font: helvetica,
     color: rgb(0.5, 0.5, 0.5),
   });
  
+
+  page.drawText('[ Important ]! Ce certificat n\'est pas lui même signé en raison de l\'absence de chaine de certification.', {
+    x: (width/2) - (helvetica.widthOfTextAtSize('[ Important ]! Ce certificat n\'est pas lui même signé en raison de l\'absence de chaine de certification.', 10)/2),
+    y: 165 - HEIGHT_OFFSET,
+    size: 10,
+    font: helvetica,
+    color: rgb(0.5, 0.5, 0.5),
+  });
+
+  page.drawText('Assurez vous d\'en avoir pris possession de façon fiable.', {
+    x: (width/2) - (helvetica.widthOfTextAtSize('Assurez vous d\'en avoir pris possession de façon fiable.', 10)/2),
+    y: 150 - HEIGHT_OFFSET,
+    size: 10,
+    font: helvetica,
+    color: rgb(0.5, 0.5, 0.5),
+  });
+
+  
+
   const pdfBytes = await pdfDoc.save();
   console.log(`Certificat généré pour ${documentHash}`);
   

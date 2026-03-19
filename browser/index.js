@@ -12,6 +12,9 @@ BLOCKCHAIN.setContract("IntegrityChecker");
 
 document.getElementById("form-sign").addEventListener("submit", async (e) => {
     e.preventDefault();
+    if( !BLOCKCHAIN.accounts){
+        await BLOCKCHAIN.initAccount();
+    }
     const HASH = await getHashOfDoc(e.target.files.files);
     console.log(HASH);
     const result = BLOCKCHAIN.addSignature(HASH);
@@ -24,6 +27,9 @@ document.getElementById("form-sign").addEventListener("submit", async (e) => {
 
 document.getElementById("form-verify").addEventListener("submit", async(e)=>{
     e.preventDefault();
+    if( !BLOCKCHAIN.accounts){
+        await BLOCKCHAIN.initAccount();
+    }
     const HASH = await getHashOfDoc(e.target.files.files);
     console.log(HASH);
     const result = await BLOCKCHAIN.verifySignature(HASH);
