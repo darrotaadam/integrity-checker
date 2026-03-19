@@ -1,0 +1,12 @@
+.clickable {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.clickable:hover {
+    opacity: 0.8;
+}
+
+.clickable:active{
+    background-color: rgba(255, 255, 255, 0.601);
+}

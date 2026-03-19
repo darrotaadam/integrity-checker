@@ -12,12 +12,13 @@ export class BlockchainWrapper{
         this.web3 = new Web3('http://localhost:7545');
         this.accounts = null;
 
-        const contractJson = JSON.parse(
+        this.contractJson = JSON.parse(
             fs.readFileSync(path.join(__dirname,`../public/contracts/${contractName}.json`), 'utf8')
         );
 
-        const abi = contractJson.abi;
-        const deployedAddress = contractJson.address;
+        
+        const abi = this.contractJson.abi;
+        const deployedAddress = this.contractJson.address;
         
         this.contract = new this.web3.eth.Contract(abi, deployedAddress);
     }
@@ -36,9 +37,7 @@ export class BlockchainWrapper{
 
     async verifySignature(hash){
         return await this.contract.methods.getSignatures(hash).call({
-            from: this.accounts[0],
-            gas: 1000000,
-            gasPrice: '10000000000'
+            from: this.accounts[0]
         });
     }
 
